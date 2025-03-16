@@ -1,25 +1,48 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-// import burgur from "../../assets/images/burger.png";
+import { useRouter } from "expo-router";
+import Animated, { Easing, useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
 
 const HomeScreen = () => {
+  const router = useRouter(); // Utilisation d'Expo Router au lieu de React Navigation
+  
+  // Valeurs d'opacité et de scale pour l'animation
+  const opacity = useSharedValue(1);
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    // Lancer l'animation
+    opacity.value = withTiming(0, { duration: 1000, easing: Easing.out(Easing.exp) });
+    scale.value = withTiming(1.5, { duration: 1000, easing: Easing.out(Easing.exp) });
+
+    // Naviguer vers l'écran "Accueil" après 1.2 secondes
+    setTimeout(() => {
+      router.push('/Accueil'); // Redirection avec Expo Router
+    }, 1200);
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
+
   return (
-    <LinearGradient colors={["#ff8a8a", "#e60000"]} style={styles.container}>
-      <Text style={styles.title}>Foodgo</Text>
+    <LinearGradient colors={["#FF939B", "#EF2A39"]} style={styles.container}>
+      <Animated.Text style={styles.title}>Foodgo</Animated.Text>
 
       {/* Images en bas */}
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/images/burger.png")} // Remplace par ton URL d'image
-          style={[styles.image, styles.leftImage]}
+          source={require("../../assets/images/burger.png")}
+          style={styles.image}
           resizeMode="contain"
         />
-        <Image
-          source={require("../../assets/images/burger.png")} // Remplace par ton URL d'image
-          style={[styles.image, styles.rightImage]}
+        <Image 
+          source={require("../../assets/images/burger1.png")}
+          style={styles.image1}
           resizeMode="contain"
         />
       </View>
@@ -34,28 +57,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 82,
-    fontWeight: "bold",
+    fontSize: 60,
+    fontWeight: "regular",
     color: "white",
     fontFamily: "cursive",
     marginBottom: "60%",
   },
   imageContainer: {
     flexDirection: "row",
+    alignItems: "flex-end",
     position: "absolute",
-    bottom: 20,
+    bottom: 0,
+    left: 0,
     width: width,
-    justifyContent: "space-evenly",
+    justifyContent: "flex-start",
   },
   image: {
-    width: 120,
-    height: 120,
+    width: 245,
+    height: 329,
   },
-  leftImage: {
-    transform: [{ translateX: -30 }],
-  },
-  rightImage: {
-    transform: [{ translateX: 30 }],
+  image1: {
+    width: 191,
+    height: 202,
+    marginLeft: -100,
   },
 });
 
